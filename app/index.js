@@ -2,7 +2,7 @@ import 'styles/index.scss';
 
 import Phaser from 'phaser';
 import pad from 'pad';
-import poem from './poem.js';
+//import poem from './poem.js';
 
 const config = {
     type: Phaser.CANVAS,
@@ -11,7 +11,7 @@ const config = {
     backgroundColor: 0,
     transparent: true,
     pixelArt: true,
-    resolution:	1,
+    resolution: 1,
     physics: {
         default: 'arcade',
         arcade: {
@@ -47,6 +47,10 @@ function preload() {
         frameWidth: 32,
         frameHeight: 32
     });
+    this.load.spritesheet('secondcoins', 'assets/secondcoins.png', {
+        frameWidth: 32,
+        frameHeight: 32
+    });
 }
 
 function create() {
@@ -76,7 +80,6 @@ function create() {
 
     player = this.physics.add.sprite(190, 400, 'player').setBounce(0.1);
 
-
     this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers('player', {
@@ -97,32 +100,47 @@ function create() {
         repeat: -1
     });
 
+    this.anims.create({
+        key: 'secondcoins animation',
+        frames: this.anims.generateFrameNumbers('secondcoins', {
+            start: 0,
+            end: 2
+        }),
+        frameRate: 10,
+        repeat: -1
+    });
+
     let stars = this.physics.add.group();
 
     // needs to be fixed
     let rowIndex = 0;
     let coins = [];
-    coin32x32Layer.layer.data.map((row)=> {
-      let collIndex = 0;
-      row.map((tile) => {
-        if (tile.index > 0 ) {
-          coins.push(tile);
-        }
-        collIndex++;
-      });
-      rowIndex++;
+    coin32x32Layer.layer.data.map((row) => {
+        let collIndex = 0;
+        row.map((tile) => {
+            if (tile.index > 0) {
+                coins.push(tile);
+            }
+            collIndex++;
+        });
+        rowIndex++;
     });
 
     console.log(coins.length);
     coins.forEach((tile) => {
-      let trope = this.physics.add.sprite(tile.x * 32 + 16, tile.y * 32 + 16, 'player').setBounce(1);
-      trope.play('coins animation', true);
-      this.physics.add.collider(trope, bigWalls64x64Layer);
-            this.physics.add.collider(trope, ground32x32Layer);
+        let trope = this.physics.add.sprite(tile.x * 32 + 16, tile.y * 32 + 16, '').setBounce(1);
+        trope.play('coins animation', true);
+        this.physics.add.collider(trope, bigWalls64x64Layer);
+        this.physics.add.collider(trope, ground32x32Layer);
+        if (tile.index == 27) {
+            trope.play('secondcoins animation', true);
+            this.physics.add.overlap(player, trope, collectSecondCoin, null, this);
+        } else {
             this.physics.add.overlap(player, trope, collectCoin, null, this);
-        });
+        }
+    });
 
-        coin32x32Layer.visible = false;
+    coin32x32Layer.visible = false;
 
     this.physics.add.collider(player, ground32x32Layer);
     this.physics.add.collider(player, bigWalls64x64Layer);
@@ -157,8 +175,16 @@ function update(time, delta) {
 
 function collectCoin(sprite, tile) {
     tile.disableBody(true, true);
-    updateText(score);
+    //updateText(score);
     score++;
+    let scoreDom = document.querySelector('.score');
+    scoreDom.innerHTML = pad(4, '' + score, '0');
+}
+
+function collectSecondCoin(sprite, tile) {
+    tile.disableBody(true, true);
+    //updateText(score);
+    score--;
     let scoreDom = document.querySelector('.score');
     scoreDom.innerHTML = pad(4, '' + score, '0');
 }
@@ -173,11 +199,11 @@ function hit(x, y, z) {
 
 }
 
-function updateText(index) {
-  let textDom = document.querySelector('.text');
-  let poemArray = poem.split(' ');
-  if (index < poemArray.length ) {
-    console.log(poem.split(' ',index));
-      textDom.innerHTML = poem.split(' ',index).join(' ');
-  }
-}
+// function updateText(index) {
+//   let textDom = document.querySelector('.text');
+//   let poemArray = poem.split(' ');
+//   if (index < poemArray.length ) {
+//     console.log(poem.split(' ',index));
+//       textDom.innerHTML = poem.split(' ',index).join(' ');
+//   }
+// }
