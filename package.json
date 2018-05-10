@@ -16,7 +16,7 @@
   "dependencies": {
     "lodash": "4.17.10",
     "pad": "^2.0.3",
-    "phaser": "^3.6.0"
+    "phaser": "^3.7.1"
   },
   "devDependencies": {
     "babel-core": "6.26.3",
