@@ -64,12 +64,12 @@ function create() {
     let death32x32Tiles = map.addTilesetImage('death_32x32');
     let death32x32Layer = map.createStaticLayer('Death 32x32 Layer', death32x32Tiles);
     death32x32Layer.setCollisionByExclusion([-1]);
-    console.log(death32x32Layer);
-    death32x32Layer.setTileIndexCallback([63,72], hit, this);
+
+    console.log(death32x32Layer.layer.collideIndexes);
+    death32x32Layer.setTileIndexCallback(death32x32Layer.layer.collideIndexes, hit, this);
 
     let coinTiles = map.addTilesetImage('coins');
-    let coin32x32Layer = map.createDynamicLayer('Coins 32x32 Layer', coinTiles);
-
+    let coin32x32Layer = map.createStaticLayer('Coins 32x32 Layer', coinTiles);
 
     player = this.physics.add.sprite(190, 400, 'player').setBounce(0.1);
 
@@ -96,18 +96,30 @@ function create() {
 
     let stars = this.physics.add.group();
 
-    // needs to fixed
-    setTimeout(() => {
-        coin32x32Layer.culledTiles.forEach((tile) => {
-            let trope = this.physics.add.sprite(tile.x * 32 + 16, tile.y * 32 + 16, 'player').setBounce(1);
-            trope.play('coins animation', true);
-            this.physics.add.collider(trope, bigWalls64x64Layer);
+    // needs to be fixed
+    let rowIndex = 0;
+    let coins = [];
+    coin32x32Layer.layer.data.map((row)=> {
+      let collIndex = 0;
+      row.map((tile) => {
+        if (tile.index > 0 ) {
+          coins.push(tile);
+        }
+        collIndex++;
+      });
+      rowIndex++;
+    });
+
+    console.log(coins.length);
+    coins.forEach((tile) => {
+      let trope = this.physics.add.sprite(tile.x * 32 + 16, tile.y * 32 + 16, 'player').setBounce(1);
+      trope.play('coins animation', true);
+      this.physics.add.collider(trope, bigWalls64x64Layer);
             this.physics.add.collider(trope, ground32x32Layer);
             this.physics.add.overlap(player, trope, collectCoin, null, this);
         });
 
         coin32x32Layer.visible = false;
-    }, 0);
 
     this.physics.add.collider(player, ground32x32Layer);
     this.physics.add.collider(player, bigWalls64x64Layer);
@@ -141,7 +153,6 @@ function update(time, delta) {
 }
 
 function collectCoin(sprite, tile) {
-    console.log(tile.body.touching);
     tile.disableBody(true, true);
     score++;
     let scoreDom = document.querySelector('.score');
