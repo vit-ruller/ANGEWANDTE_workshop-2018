@@ -177,6 +177,7 @@ function updateText(index) {
   let textDom = document.querySelector('.text');
   let poemArray = poem.split(' ');
   if (index < poemArray.length ) {
-      textDom.innerHTML = poem.split(' ')[index];
+    console.log(poem.split(' ',index));
+      textDom.innerHTML = poem.split(' ',index).join(' ');
   }
 }

@@ -6,7 +6,10 @@ html {
 }
 
 body {
+  background: red;
   font-family: helvetica, sans-serif;
+  // death_32x32.png
+  //background: url('../death_32x32.png');
 }
 
 canvas {
@@ -24,6 +27,25 @@ canvas {
   position: fixed;
   top: 0;
   left: 0;
+  font-size: 0.8em;
+  text-align: center;
+  line-height: 64px;
+  margin: 0.5em;
+  z-index: 500;
+  border: 1px solid;
+  border-color: rgb(176, 176, 176);
+  //filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+
+}
+.text {
+  width: 256px;
+  height: 64px;
+  background: #ffff90;
+  color: black;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%,0);
   font-size: 0.8em;
   text-align: center;
   line-height: 64px;
