@@ -2,13 +2,16 @@ import 'styles/index.scss';
 
 import Phaser from 'phaser';
 import pad from 'pad';
+import poem from './poem.js';
 
 const config = {
     type: Phaser.CANVAS,
     width: window.innerWidth,
     height: window.innerHeight,
-    backgroundColor: '#ffffff',
+    backgroundColor: 0,
+    transparent: true,
     pixelArt: true,
+    resolution:	1,
     physics: {
         default: 'arcade',
         arcade: {
@@ -154,6 +157,7 @@ function update(time, delta) {
 
 function collectCoin(sprite, tile) {
     tile.disableBody(true, true);
+    updateText(score);
     score++;
     let scoreDom = document.querySelector('.score');
     scoreDom.innerHTML = pad(4, '' + score, '0');
@@ -167,4 +171,12 @@ function hit(x, y, z) {
     scoreDom.innerHTML = '0000';
     this.scene.restart();
 
+}
+
+function updateText(index) {
+  let textDom = document.querySelector('.text');
+  let poemArray = poem.split(' ');
+  if (index < poemArray.length ) {
+      textDom.innerHTML = poem.split(' ')[index];
+  }
 }
